@@ -7,6 +7,7 @@ defined('BASE_PATH') or define('BASE_PATH',
        dirname(__FILE__).DIRECTORY_SEPARATOR.'..');
 spl_autoload_register('Core::autoload');
 
+require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 /**
  * Core class for the application
@@ -44,7 +45,7 @@ class Core
         $router->parseUrl();
         $router->setVerb();
 
-        self::execute($router->getSegments(), $router->getVerb());
+        self::execute($router->getSegments(), $router->getVerb(), file_get_contents('php://input'));
     }
 
     /**
@@ -55,7 +56,7 @@ class Core
      * @throws Exception
      * @throws ServiceException
      */
-    public static function execute($segments, $verb)
+    public static function execute($segments, $verb, $payload)
     {
 
         try {
@@ -68,7 +69,7 @@ class Core
                         '/', $serviceName).".php") || !class_exists($serviceName))
                     throw new ServiceException('Invalid service name');
 
-            return (new $serviceName)->run($verb, isset($segments[2]) ? $segments[2] : null);
+            return (new $serviceName)->run($verb, isset($segments[2]) ? $segments[2] : null, $payload);
         } catch (Exception $e) {
             echo $e->getMessage();
         }

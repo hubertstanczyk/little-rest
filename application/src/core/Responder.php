@@ -16,6 +16,6 @@ class Responder{
     * @return string
     */
     public static function returnMessage($status, $message){
-     return json_encode(array('response'=>$status, 'body'=>$message));
+     echo json_encode(array('response'=>$status, 'body'=>$message));
     }
 }
